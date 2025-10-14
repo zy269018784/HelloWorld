@@ -1,6 +1,9 @@
 ﻿#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <d3d11.h>
+#include <d3d10_1.h>
+#include <d3d10.h>
+#include <D3D10_1.h>
+#include <D3D10.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <iostream>
@@ -9,23 +12,23 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 
-#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d3d10_1.lib")
+#pragma comment(lib, "d3d10.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "glfw3.lib")
 
 using namespace DirectX;
 
-// D3D11 对象
-ID3D11Device* g_pDevice = nullptr;
-ID3D11DeviceContext* g_pDeviceContext = nullptr;
+// D3D10 对象
+ID3D10Device1* g_pDevice = nullptr;
 IDXGISwapChain* g_pSwapChain = nullptr;
-ID3D11RenderTargetView* g_pRenderTargetView = nullptr;
+ID3D10RenderTargetView* g_pRenderTargetView = nullptr;
 
 // 图形资源
-ID3D11VertexShader* g_pVertexShader = nullptr;
-ID3D11PixelShader* g_pPixelShader = nullptr;
-ID3D11InputLayout* g_pInputLayout = nullptr;
-ID3D11Buffer* g_pVertexBuffer = nullptr;
+ID3D10VertexShader* g_pVertexShader = nullptr;
+ID3D10PixelShader* g_pPixelShader = nullptr;
+ID3D10InputLayout* g_pInputLayout = nullptr;
+ID3D10Buffer* g_pVertexBuffer = nullptr;
 
 // 窗口尺寸
 const int WINDOW_WIDTH = 800;
@@ -98,7 +101,7 @@ GLFWwindow* InitializeGLFW()
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "D3D11 + GLFW Triangle", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "D3D10 + GLFW Triangle", nullptr, nullptr);
     if (!window)
     {
         std::cerr << "Failed to create GLFW window" << std::endl;
@@ -110,8 +113,8 @@ GLFWwindow* InitializeGLFW()
     return window;
 }
 
-// 初始化D3D11设备
-bool InitializeD3D11(GLFWwindow* window)
+// 初始化D3D10设备
+bool InitializeD3D10(GLFWwindow* window)
 {
     // 获取窗口的HWND
     HWND hwnd = glfwGetWin32Window(window);
@@ -138,27 +141,25 @@ bool InitializeD3D11(GLFWwindow* window)
     sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
     // 特性等级
-    D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
+    D3D10_FEATURE_LEVEL1 featureLevels[] = { D3D10_FEATURE_LEVEL_10_1, D3D10_FEATURE_LEVEL_10_0 };
+    D3D10_FEATURE_LEVEL1 featureLevel;
 
     // 创建设备和交换链
-    HRESULT hr = D3D11CreateDeviceAndSwapChain(
-        nullptr,
-        D3D_DRIVER_TYPE_HARDWARE,
-        nullptr,
-        0,
-        featureLevels,
-        1,
-        D3D11_SDK_VERSION,
-        &sd,
-        &g_pSwapChain,
-        &g_pDevice,
-        nullptr,
-        &g_pDeviceContext
+    HRESULT hr = D3D10CreateDeviceAndSwapChain1(
+        nullptr,                    // 默认适配器
+        D3D10_DRIVER_TYPE_HARDWARE, // 硬件驱动
+        nullptr,                    // 软件模块
+        0,                          // 标志
+        D3D10_FEATURE_LEVEL_10_1,   // 特性等级
+        D3D10_1_SDK_VERSION,        // SDK版本
+        &sd,                        // 交换链描述
+        &g_pSwapChain,              // 交换链
+        &g_pDevice                  // 设备
     );
 
     if (FAILED(hr))
     {
-        std::cerr << "Failed to create D3D11 device and swap chain" << std::endl;
+        std::cerr << "Failed to create D3D10 device and swap chain" << std::endl;
         return false;
     }
 
@@ -168,9 +169,9 @@ bool InitializeD3D11(GLFWwindow* window)
 // 创建渲染目标视图
 bool CreateRenderTarget()
 {
-    ID3D11Texture2D* pBackBuffer = nullptr;
+    ID3D10Texture2D* pBackBuffer = nullptr;
 
-    HRESULT hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+    HRESULT hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*)&pBackBuffer);
     if (FAILED(hr))
     {
         std::cerr << "Failed to get back buffer" << std::endl;
@@ -186,14 +187,14 @@ bool CreateRenderTarget()
         return false;
     }
 
-    g_pDeviceContext->OMSetRenderTargets(1, &g_pRenderTargetView, nullptr);
+    g_pDevice->OMSetRenderTargets(1, &g_pRenderTargetView, nullptr);
     return true;
 }
 
 // 编译着色器
-bool CompileShader(const char* shaderCode, const char* entryPoint, const char* target, ID3DBlob** ppBlob)
+bool CompileShader(const char* shaderCode, const char* entryPoint, const char* target, ID3D10Blob** ppBlob)
 {
-    ID3DBlob* pErrorBlob = nullptr;
+    ID3D10Blob* pErrorBlob = nullptr;
 
     HRESULT hr = D3DCompile(
         shaderCode,
@@ -226,21 +227,21 @@ bool CompileShader(const char* shaderCode, const char* entryPoint, const char* t
 // 创建着色器和输入布局
 bool CreateShadersAndInputLayout()
 {
-    ID3DBlob* pVSBlob = nullptr;
-    ID3DBlob* pPSBlob = nullptr;
+    ID3D10Blob* pVSBlob = nullptr;
+    ID3D10Blob* pPSBlob = nullptr;
 
-    if (!CompileShader(g_VertexShaderCode, "main", "vs_5_0", &pVSBlob))
+    if (!CompileShader(g_VertexShaderCode, "main", "vs_4_0", &pVSBlob))
     {
         return false;
     }
 
-    if (!CompileShader(g_PixelShaderCode, "main", "ps_5_0", &pPSBlob))
+    if (!CompileShader(g_PixelShaderCode, "main", "ps_4_0", &pPSBlob))
     {
         if (pVSBlob) pVSBlob->Release();
         return false;
     }
 
-    HRESULT hr = g_pDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &g_pVertexShader);
+    HRESULT hr = g_pDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), &g_pVertexShader);
     if (FAILED(hr))
     {
         pVSBlob->Release();
@@ -248,7 +249,7 @@ bool CreateShadersAndInputLayout()
         return false;
     }
 
-    hr = g_pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &g_pPixelShader);
+    hr = g_pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), &g_pPixelShader);
     if (FAILED(hr))
     {
         pVSBlob->Release();
@@ -257,10 +258,10 @@ bool CreateShadersAndInputLayout()
     }
 
     // 创建输入布局
-    D3D11_INPUT_ELEMENT_DESC layout[] =
+    D3D10_INPUT_ELEMENT_DESC layout[] =
     {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 }
     };
     UINT numElements = ARRAYSIZE(layout);
 
@@ -288,14 +289,14 @@ bool CreateVertexBuffer()
         { XMFLOAT3(-0.5f, -0.5f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }  // 顶点2: 蓝色
     };
 
-    D3D11_BUFFER_DESC bd;
+    D3D10_BUFFER_DESC bd;
     ZeroMemory(&bd, sizeof(bd));
-    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.Usage = D3D10_USAGE_DEFAULT;
     bd.ByteWidth = sizeof(SimpleVertex) * 3;
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
     bd.CPUAccessFlags = 0;
 
-    D3D11_SUBRESOURCE_DATA InitData;
+    D3D10_SUBRESOURCE_DATA InitData;
     ZeroMemory(&InitData, sizeof(InitData));
     InitData.pSysMem = vertices;
 
@@ -312,14 +313,14 @@ bool CreateVertexBuffer()
 // 设置视口
 void SetupViewport()
 {
-    D3D11_VIEWPORT vp;
-    vp.Width = (FLOAT)WINDOW_WIDTH;
-    vp.Height = (FLOAT)WINDOW_HEIGHT;
+    D3D10_VIEWPORT vp;
+    vp.Width = WINDOW_WIDTH;
+    vp.Height = WINDOW_HEIGHT;
     vp.MinDepth = 0.0f;
     vp.MaxDepth = 1.0f;
     vp.TopLeftX = 0;
     vp.TopLeftY = 0;
-    g_pDeviceContext->RSSetViewports(1, &vp);
+    g_pDevice->RSSetViewports(1, &vp);
 }
 
 // 渲染函数
@@ -327,25 +328,25 @@ void Render()
 {
     // 清除渲染目标为深蓝色
     float clearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };
-    g_pDeviceContext->ClearRenderTargetView(g_pRenderTargetView, clearColor);
+    g_pDevice->ClearRenderTargetView(g_pRenderTargetView, clearColor);
 
     // 设置输入布局
-    g_pDeviceContext->IASetInputLayout(g_pInputLayout);
+    g_pDevice->IASetInputLayout(g_pInputLayout);
 
     // 设置顶点缓冲区
     UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
-    g_pDeviceContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
+    g_pDevice->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 
     // 设置图元拓扑
-    g_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    g_pDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     // 设置着色器
-    g_pDeviceContext->VSSetShader(g_pVertexShader, nullptr, 0);
-    g_pDeviceContext->PSSetShader(g_pPixelShader, nullptr, 0);
+    g_pDevice->VSSetShader(g_pVertexShader);
+    g_pDevice->PSSetShader(g_pPixelShader);
 
     // 绘制三角形
-    g_pDeviceContext->Draw(3, 0);
+    g_pDevice->Draw(3, 0);
 
     // 呈现到屏幕
     g_pSwapChain->Present(1, 0);
@@ -360,7 +361,6 @@ void Cleanup()
     if (g_pPixelShader) g_pPixelShader->Release();
     if (g_pRenderTargetView) g_pRenderTargetView->Release();
     if (g_pSwapChain) g_pSwapChain->Release();
-    if (g_pDeviceContext) g_pDeviceContext->Release();
     if (g_pDevice) g_pDevice->Release();
 }
 
@@ -374,8 +374,8 @@ int main()
         return -1;
     }
 
-    std::cout << "Initializing D3D11..." << std::endl;
-    if (!InitializeD3D11(window))
+    std::cout << "Initializing D3D10..." << std::endl;
+    if (!InitializeD3D10(window))
     {
         glfwTerminate();
         return -1;
@@ -407,7 +407,7 @@ int main()
         return -1;
     }
 
-    std::cout << "D3D11 + GLFW Triangle Example Running..." << std::endl;
+    std::cout << "D3D10 + GLFW Triangle Example Running..." << std::endl;
     std::cout << "Press ESC to exit" << std::endl;
 
     // 主循环
