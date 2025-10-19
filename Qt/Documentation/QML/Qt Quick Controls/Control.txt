@@ -1,0 +1,38 @@
+Properties
+	padding : real
+	leftPadding : real
+	rightPadding : real
+	topPadding : real
+	bottomPadding : real
+	verticalPadding : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	horizontalPadding : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	leftInset : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	rightInset : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	topInset : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	bottomInset : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	spacing : real
+	background : Item
+	contentItem : Item
+	implicitBackgroundHeight : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	implicitBackgroundWidth : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	implicitContentHeight : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	implicitContentWidth : real (since QtQuick.Controls 2.5 (Qt 5.12))
+	availableHeight : real
+	availableWidth : real
+	focusReason : enumeration
+	font : font
+	hoverEnabled : bool
+	hovered : bool
+
+	
+Button consists of two visual items: background and content item.
+CheckBox consists of three visual items: background, contentItem and indicator.
+ComboBox consists of background, content item, popup, indicator, and delegate.
+Dial consists of two visual items: background and handle.
+GroupBox consists of two visual items: background and label.
+Label can have a visual background item.
+
+	locale : Locale
+	mirrored : bool
+	visualFocus : bool
+	wheelEnabled : bool

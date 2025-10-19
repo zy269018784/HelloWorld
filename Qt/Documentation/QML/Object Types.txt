@@ -1,0 +1,12 @@
+Binding					Enables the arbitrary creation of property bindings
+Component				Encapsulates a QML component definition
+Connections				Describes generalized connections to signals
+Date					Provides date functions
+Instantiator			Dynamically creates objects
+Locale					Provides locale specific properties and formatted data
+LoggingCategory			Defines a logging category in QML
+Number					Object provides represents a number value
+Qt						Provides a global object with useful enums and functions from Qt
+QtObject				A basic QML type
+String					Object represents a string value
+Timer					Triggers a handler at a specified interval

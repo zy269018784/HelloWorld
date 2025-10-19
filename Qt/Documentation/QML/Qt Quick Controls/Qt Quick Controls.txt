@@ -1,0 +1,58 @@
+继承关系:
+	Item
+		Control
+			AbstractButton   			Abstract base type providing functionality common to buttons.
+				Button
+					RoundButton
+					ToolButton
+				RadioButton
+				TabButton
+				CheckBox
+				Switch
+				MenuItem				Presents an item within a Menu.
+				MenuBarItem				Presents a drop-down menu within a MenuBar.
+			Container
+				DialogButtonBox
+				MenuBar
+				SplitView
+				SwipeView
+				TabBar	
+			BusyIndicator	
+			PageIndicator	
+			ProgressBar	
+			ScrollBar	
+			ScrollIndicator	
+			
+			ComboBox
+			SpinBox						Allows the user to select from a set of preset values.
+			Slider						Used to select a value by sliding a handle along a track.
+			Menu
+			MenuSeparator
+			ScrollBar
+			TextEdit
+				TextArea		
+			Pane						Provides a background matching with the application style and theme.
+				Frame					Visual frame for a logical group of controls.
+					GroupBox			Visual frame and title for a logical group of controls.
+		TextInput
+			TextField
+		Text
+			Label
+		
+Control分类:
+	Button 				ControlsGuidelines for button controls
+	Container 			ControlsGuidelines for container controls
+	Delegate 			ControlsGuidelines for delegate controls
+	Indicator 			ControlsGuidelines for indicator controls
+	Input 				ControlsGuidelines for input controls
+	Menu 				ControlsGuidelines for menu controls
+	Navigation 			ControlsGuidelines for navigation controls
+	Popup 				ControlsGuidelines for popup controls
+	Separator 			ControlsGuidelines for separator controls
+
+Menu releated:
+	Menu			Popup that can be used as a context menu or popup menu
+	MenuBar			Provides a window menu bar
+	MenuBarItem		Presents a drop-down menu within a MenuBar
+	MenuItem		Presents an item within a Menu
+	MenuSeparator 	Separates a group of items in a menu from adjacent items. 

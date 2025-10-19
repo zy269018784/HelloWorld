@@ -1,0 +1,1 @@
+Button consists of two visual items: background and content item.

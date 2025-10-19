@@ -1,0 +1,5 @@
+Qt版本			QML版本
+QT 5.9.2			QtQuick.Window 2.2
+
+
+QT 6

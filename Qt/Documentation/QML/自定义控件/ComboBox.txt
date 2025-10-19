@@ -1,0 +1,6 @@
+ComboBox:
+	background
+	content item
+	popup
+	indicator
+	delegate

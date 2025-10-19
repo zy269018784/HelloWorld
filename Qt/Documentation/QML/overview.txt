@@ -1,0 +1,64 @@
+Qt Quick Controls
+	Xml List Model 	- contains types for creating models from XML data
+	Local Storage 	- a submodule containing a JavaScript interface for an SQLite database
+	Particles 		- provides a particle system for QML applications
+	Window 			- contains types for creating top-level windows and accessing screen information
+	Dialogs 		- contains types for creating and interacting with system dialogs
+	Controls 		- provides a set of reusable UI components
+	Layouts 		- contains types that are used to arrange items in the user interface
+	Tests 			- types for testing QML applications. 
+
+
+Qt Quick Controls:
+	Item
+		Control
+			AbstractButton   			Abstract base type providing functionality common to buttons.
+				Button
+					RoundButton
+					ToolButton
+				RadioButton
+				TabButton
+				CheckBox
+				Switch
+				MenuItem				Presents an item within a Menu.
+				MenuBarItem				Presents a drop-down menu within a MenuBar.
+			Container
+				MenuBar
+				TabBar
+			ComboBox
+			SpinBox						Allows the user to select from a set of preset values.
+			Slider						Used to select a value by sliding a handle along a track.
+			Label
+			Menu
+			MenuSeparator
+			ScrollBar
+			TextEdit
+				TextArea		
+			Pane						Provides a background matching with the application style and theme.
+				Frame					Visual frame for a logical group of controls.
+					GroupBox			Visual frame and title for a logical group of controls.
+		TextInput
+			TextField
+
+
+Qt Quick Dialogs:
+	Dialog
+	ColorDialog
+	FileDialog
+	FontDialog
+	MessageDialog
+
+
+
+Qt Quick Window:
+	CloseEvent
+	Screen
+	Window
+
+
+Qt Quick Layouts:
+	Layout
+	RowLayout
+	ColumnLayout
+	GridLayout
+	StackLayout

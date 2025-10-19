@@ -1,0 +1,4 @@
+date		Date value
+point		Value with x and y attributes
+rect		Value with x, y, width and height attributes
+size		Value with width and height attributes

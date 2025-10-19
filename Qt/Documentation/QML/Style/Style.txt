@@ -1,0 +1,18 @@
+Note: The macOS and Windows styles are not suitable for customizing. 
+It is instead recommended to always base a customized control on top of a 
+single style that is available on all platforms, 
+e.g Basic Style, Fusion Style, Imagine Style, Material Style, Universal Style.
+ By doing so, you are guaranteed that it will always look the same, 
+ regardless of which style the application is run with.
+ To learn how to use a different style, see Using Styles in Qt Quick Controls. 
+Alternatively, you can create your own style.
+
+
+Style:
+	macOS
+	Windows
+	Basic
+	Fusion
+	Imagine
+	Material
+	Universal
