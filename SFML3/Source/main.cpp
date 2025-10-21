@@ -15,7 +15,7 @@ int main()
     sf::Text text(font, "Hello SFML", 50);
 
     // Load a music to play
-    sf::Music music("doodle_pop.ogg");
+    sf::Music music("1.mp3");
 
     // Play the music
     music.play();
